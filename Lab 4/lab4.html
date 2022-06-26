@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+  <head> 
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+      body {
+          background-color: white;
+      }
+    </style>
+ 
+  </head>
+
+  <body>
+	
+	<!-- Name -->
+	<h1>Keelan duddy</h1>
+
+	<!-- canvas container with width, height and border style-->
+    <canvas id="canvasForBall" width="600" height="500"  style="border: 5px solid black;"></canvas>
+
+    <script type="text/javascript">
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("canvasForBall");
+	  
+		// Get a 2D context for the canvas.
+		var ctx = canvas.getContext("2d");
+	  			
+		// Javascript event listener to keypress event.
+		window.addEventListener("keydown", function(event) { 
+			// log event to the console.
+			console.log(event);
+		});
+		
+		// Ball class
+		class Ball{
+			// variables
+			rotate = 0.0;
+			
+			
+			// constructor
+			constructor(xP, yP, radius, xV, yV, colour, mass){
+				this.xP = xP;
+				this.yP = yP;
+				this.radius = radius;
+				this.xV = xV;
+				this.yV = yV;
+				this.colour = colour;
+				this.mass = mass;
+			}
+					
+			draw(){
+				ctx.lineWidth = 5;
+
+				// Draw  ball 
+				ctx.beginPath();
+				ctx.arc(this.xP, this.yP, this.radius, 0, 2 * Math.PI);
+				ctx.fillStyle = this.colour;
+				ctx.fill();
+				
+				ctx.moveTo(this.xP, this.yP); 
+				this.x = this.radius * (Math.cos(4/2 * Math.PI + this.rotate)) + this.xP; 
+				this.y = this.radius * (Math.sin(4/2 * Math.PI + this.rotate)) + this.yP; 
+				ctx.lineTo(this.x, this.y); 
+				
+			
+				ctx.stroke();							
+			}// draw()
+			
+			// makes the ball rotate in the oposite direction when it hits the canvas
+			rotateBall(s){
+				if(this.rotateSpeed == 1){
+					// adds the rotation 
+					this.rotate += s;
+				}
+				else{
+					// subtracts rotation 
+					this.rotate -= s;
+				}
+			}
+			
+			// move from last lab
+			move(){
+				if(this.xP  <  this.radius){
+					this.xV = this.xV * -1;
+					
+				}
+				else if(this.xP+ this.radius >= canvasForBall.width){
+					this.xV = this.xV * -1;
+					
+				}
+				if(this.yP < this.radius ){
+					this.yV = this.yV* -1;
+					
+				}
+				else if(this.yP + this.radius >= canvasForBall.height){
+					this.yV = this.yV * -1;
+					
+				}
+				
+				// Update the y and x location.
+				this.yP += this.yV;
+				this.xP += this.xV;
+			}// move()
+			
+			gravity(){
+				var frection = 1;
+				var gravity = 0.9;
+				
+				// every time it hits the bottom it loses y velocity
+			
+				if(this.yP + this.radius > canvasForBall.height - 5){
+					this.yV = - this.yV * gravity;
+				}					
+
+				else {
+
+					this.yV += frection;
+				}
+
+				this.yP += this.yV;
+				
+			}
+			
+		}//Ball 
+				
+		// create objects
+		
+		var ball1 = new Ball(150, 50, 40, 4, 5, "yellow", 1);
+		var ball2 = new Ball(180, 60, 40, 3, 3, "orange", 2);
+		var ball3 = new Ball(400, 150, 35, 0, 6, "pink", 3);
+
+		//keydown jQuery
+		$(document.body).on('keydown', function(e) {	
+			
+			console.log(e.which);			
+			switch(e.which){
+				case 65:
+					ball1.xV --;
+					break;
+				case 87:
+					ball1.yV --;
+					break;
+				case 68:
+					ball1.xV ++;
+					break;
+				case 83:
+					ball1.yV ++;
+					break;	
+                // rotate ones					
+				case 82:
+					ball1.rotate += 0.5;;
+					break;	
+				case 84:
+					ball1.rotate -= 0.5;;
+					break;						
+			}
+				
+		});
+		
+		// event listener for a double click to move ball
+		canvas.addEventListener("dblclick", function(event) { 
+			var mousePos = canvasPosition(canvas, event);
+			ball1.xP = mousePos.x;
+			ball1.yP = mousePos.y;
+		});
+		
+		function canvasPosition(canvas, event){
+			return {
+				
+				// returns canvas position
+				x: event.clientX - canvas.offsetLeft,
+				y: event.clientY - canvas.offsetTop
+			};
+		}
+		
+		// A function to repeat every time the animation loops.
+		function repeatme() {
+			
+			ctx.clearRect(0, 0, canvasForBall.width, canvasForBall.height);
+		
+			// Creates Object balls
+			
+			ball1.draw();
+			ball1.move();
+			ball1.rotateBall(0.09);
+			ball2.draw();
+			ball2.move();
+			ball2.rotateBall(0.09);
+			
+           // ball with gravity
+			ball3.draw();
+			ball3.rotateBall(0.09);
+			ball3.gravity();			
+						
+			//infinite loop
+			window.requestAnimationFrame(repeatme);
+			
+		}
+		
+		// animation
+		repeatme();
+		
+    </script>
+
+  </body>
+
+</html>

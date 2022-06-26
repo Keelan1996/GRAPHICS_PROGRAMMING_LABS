@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Keelan Lab-1 & 2</title>
+    <style>
+        /*(1) Declare HTML canvas */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+       
+         /*(3) Draw  border to the canvas*/
+        
+		canvas {
+                border: solid black 10px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id='canvas' style='border: 10px solid; width: 1400px; height: 700px;'>
+
+    </canvas>
+    <script>
+
+        //(4)Size of canvas changed in < canvas id >
+        //declare the canvas
+        var canvas = document.getElementById('canvas');
+        canvas.width = canvas.scrollWidth;
+        canvas.height = canvas.scrollHeight;
+
+        //declare it retriveving/creating 2-dimensional shape
+        var ctx = canvas.getContext('2d');
+		
+		// DRAWING NAME
+		ctx.font = "20px Georgia";
+        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillText("Keelan Duddy", 400, 300);
+		
+		// function to draw triangle
+		function drawTriangle(x, y){
+			// draws a filled triangle
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x - 100, y + 200); // after testing around with the lineTo i got this to make triangle
+			ctx.lineTo(x + 100, y + 200);
+			ctx.closePath();
+			ctx.fillStyle = "rgb(54, 168, 50, 0.4)"; // 0.4 is for transparency 
+			ctx.fill();
+			ctx.stroke();
+		}
+		
+		
+		// rectangle
+		
+		//(6)add different fillStyle Colour to rectangle
+        ctx.fillStyle = "rgb(255, 69, 0)";
+        //(9)Add 40% transperency to shapes
+        ctx.fillStyle = "rgba(255, 69, 0 ,0.8)";
+        //(7)Change the dimensions of the rectangle
+        ctx.fillRect(50, 50, 200, 100); // changed the fillrect until this got me a rectangle
+
+        // the outline
+        ctx.lineWidth = 10;
+        //(9)Added transperency of 40%
+        ctx.fillStyle = "rgb(255, 50, 198, 0.6)";
+        //stroke() creates lined border around shaped
+        ctx.stroke();
+        ctx.closePath();
+        
+		
+		
+		
+		
+		// circles 1 & 2
+		
+		
+		ctx.beginPath();
+	   
+		
+		
+
+        //(10)creates circle x1 
+		ctx.lineWidth = 2;
+        ctx.arc(50, 100, 50, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255, 69, 0, 0.4)";
+
+        //Begins new path to create a new shape 
+        ctx.beginPath();
+
+        //(10) creates circle  x2 
+        ctx.arc(250, 100, 50, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(230, 230, 34, 0.6)";
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+        ctx.fill();
+
+        // fills in the background of the shape
+        ctx.fill();
+
+        
+		
+		
+		// beach ball class
+		
+		
+		class Ball {
+
+		constructor(x, y, radius, colour) {
+		
+		        	//constructor variables
+					this.radius = radius; //radius of the ball
+					this.x = x; //x position center of the ball
+					this.y = y; //y position center of the ball
+					 
+					this.slides = 7;//ber of slides for beach ball
+					this.colour= colour;
+					}
+					
+					
+		           //draw beach ball in canvas, using the bar slides for the number of sections
+				drawB() {
+					
+					//draw normal circle
+					ctx.beginPath();
+					ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI); // formula creates circle
+					ctx.stroke();
+
+					//fill circle
+					ctx.fillStyle = this.colour;
+					ctx.fill();
+
+					//start angle in where the line will go too
+					var startAngle = 2 * Math.PI;
+
+					// increases the angle to make the 7 sections, this increments the start angle so that there are 7 even pieces
+					var increaseAngle = (2 * Math.PI)/this.slides;
+
+					//move cursor back to center
+					ctx.moveTo(this.x, this.y);
+
+					//loop for the number of sections
+					for (var i = 0; i < this.slides; i++) {
+
+						//draw line from middle of the circle to outer edge  Cartesian to polar coordinates FEATA
+						ctx.lineTo(this.x + this.radius * Math.cos(startAngle), this.y + this.radius * Math.sin(startAngle));
+
+						//move pen back to center
+						ctx.moveTo(this.x, this.y);
+
+						//increase angle so moves the line the less amount of slides divided the higher the number 
+						startAngle += increaseAngle;
+
+					}//end for loop
+
+					//stroke pat
+					ctx.stroke();
+
+					//draw small inner circle
+					ctx.beginPath();
+					ctx.arc(this.x, this.y, this.radius * 0.95, 0, 2 * Math.PI);
+					ctx.stroke();
+
+				}//end drawBeachball() 
+					
+					// move beach ball
+					move( x, y) 
+					{
+					
+					this.x = x;
+					this.y = y;
+
+				    }//move(x,y)
+					
+					// resize beach ball
+					resize(radius){
+					
+					this.radius = radius;
+					
+					}
+	
+					
+					
+					
+					
+					
+					
+			}//ball
+
+     
+	 // pacman class
+
+     class Pacman {
+            constructor(X, Y, radius, direction) {
+                this.X = X;
+                this.Y = Y;
+                this.radius = radius;
+                this.direction = direction;
+            }
+
+            firstPacman() {
+			
+			      //  the calculations based on the right side of the arcs and circles diagram on notes
+				  
+                ctx.beginPath();
+
+                //Draws the pacman outline
+                ctx.arc(this.X, this.Y, this.radius,  Math.PI/ 4, 7 * Math.PI/4, this.direction);
+
+                //Moves pen to centre of the pacman
+                ctx.moveTo(this.X, this.Y);
+				
+				//Cartesian to polar coordinates
+
+                //Calculates the angle for the bottom line of the mouth and adds the length of the line FEATA
+                var xCor = 50 * Math.cos(Math.PI / 4) + this.X;
+                var yCor = 50 * Math.sin(Math.PI / 4) + this.Y;
+
+                //Draws the bottom line
+                ctx.lineTo(xCor, yCor);
+
+                //Calculates the angle for the bottom line of mouth and adds the length of the line
+                var xCor2 = 50 * Math.cos(7*Math.PI / 4) + this.X;
+                var yCor2 = 50 * Math.sin(7*Math.PI / 4) + this.Y;
+
+            
+                //Moves pen to centre of the pacman
+                ctx.moveTo(this.X, this.Y);
+
+                //Draws the top line
+                ctx.lineTo(xCor2, yCor2);
+                
+              
+                //Fills Pacman color in yellow
+                ctx.fillStyle = "rgb(255,255,0)";
+                ctx.fill();
+                
+			
+                ctx.stroke();
+                
+            }
+			
+			  secondPacman() {
+			  
+			    // changed the calculations based on the opposite side of the arcs and circles diagram
+				
+				
+                ctx.beginPath();
+
+                //Draws the pacman outline
+                ctx.arc(this.X, this.Y, this.radius, 5 * Math.PI / 4, 3 * Math.PI/4, this.direction);
+
+                //Moves pen to centre of the pacman
+                ctx.moveTo(this.X, this.Y);
+
+                //Calculates the angle for the top line of the mouth and adds the length of the line FEATA
+                var xCor = 50 * Math.cos(5 * Math.PI / 4) + this.X;
+                var yCor = 50 * Math.sin(5 *Math.PI / 4) + this.Y;
+
+                //Draws the top line
+                ctx.lineTo(xCor, yCor);
+
+                //Calculates the angle for the bottom line of mouth and adds the length of the line
+                var xCor2 = 50 * Math.cos(3 * Math.PI / 4) + this.X;
+                var yCor2 = 50 * Math.sin(3 *Math.PI / 4) + this.Y;
+
+                //Moves pen to centre of the pacman
+                ctx.moveTo(this.X, this.Y);
+
+                //Draws the top line
+                ctx.lineTo(xCor2, yCor2);
+                
+             
+                
+                //Fills Pacman color in yellow
+                ctx.fillStyle = "rgb(255,255,0)";
+                ctx.fill();
+
+                ctx.stroke();
+                ctx.closePath();
+            }
+       
+       
+	  
+		
+		}
+		
+		
+		// function call to draw triangle
+		drawTriangle(110, 100); 
+		
+		// pac man instances 
+		var myPac = new Pacman(800, 400, 50, false);
+		myPac.firstPacman();
+		var myPac1 = new Pacman(700, 300, 50, false);
+		myPac1.secondPacman();
+		
+		
+		// ball instances
+		var myBall = new Ball(700, 120, 80, "orange", 2);
+		myBall.drawB();
+		
+		// moving and resizing two
+		myBall.move(850, 200);
+		myBall.resize(65);
+		myBall.drawB();
+		
+		myBall.move(900,300);
+		myBall.resize(40);
+		myBall.drawB();
+		
+		
+
+    </script>
+</body>
+
+</html>

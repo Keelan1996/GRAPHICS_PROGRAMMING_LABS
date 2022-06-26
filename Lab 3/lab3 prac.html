@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head> 
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+      body {
+          background-color: white;
+      }
+    </style>
+ 
+  </head>
+
+  <body>
+	
+	<!-- Name -->
+	<h1>Keelan Duddy</h1>
+
+	<!-- canvas container with width, height and border style-->
+    <canvas id="canvasForBall" width="600" height="500"  style="border: 1px solid black;"></canvas>
+
+    <script type="text/javascript">
+		
+		var canvas = document.getElementById("canvasForBall");
+	  
+		
+		var ctx = canvas.getContext("2d");
+	  	
+		// A function to repeat .
+		function repeatme() {
+			// clears the entire canvas
+			ctx.clearRect(0, 0, canvasForBall.width, canvasForBall.height);
+		
+		
+			ball1.draw();
+			ball1.move();
+			ball1.rotateBall();
+			
+			// Creates Object 2 - ball2 
+			ball2.draw();
+			ball2.move();
+			ball2.rotateBall();
+			
+			// Creates Object 3 - ball3 
+			ball3.draw();
+			ball3.move();
+			ball3.rotateBall();
+								
+			// never stops - infinite loop
+			window.requestAnimationFrame(repeatme);
+			
+		}
+		
+		// Ball class
+		class Ball{
+			// class variables
+			rotate = 0.0;
+			rotateSpeed = 1;
+			
+			// class constructor
+			constructor(xPos, yPos, radius, xVelocity, yVelocity){
+				this.xPos = xPos;
+				this.yPos = yPos;
+				this.radius = radius;
+				this.xVelocity = xVelocity;
+				this.yVelocity = yVelocity;
+			}
+					
+			draw(){
+				ctx.lineWidth = 5;
+
+				// Draw the ball (stroked, not filled).
+				ctx.beginPath();
+				ctx.arc(this.xPos, this.yPos, this.radius, 0.25 * Math.PI, 1.75 * Math.PI);
+				//ctx.arc(this.xPos, this.yPos, this.radius, 0, 2 * Math.PI);
+				ctx.fillStyle = "red";
+				ctx.fill();
+				
+				  //Moves pen to centre of the pacman
+                ctx.moveTo(this.xPos, this.yPos);
+				
+				//Cartesian to polar coordinates
+
+                //Calculates the angle for the bottom line of the mouth and adds the length of the line
+                var x1 = 35 * Math.cos(Math.PI / 4) + this.xPos;
+                var y1 = 35 * Math.sin(Math.PI / 4) + this.yPos;
+
+                //Draws the bottom line
+                ctx.lineTo(x1, y1);
+
+                //Calculates the angle for the top line of mouth and adds the length of the line
+                var x2 = 35 * Math.cos(-Math.PI / 4) + this.xPos
+                var y2 = 35 * Math.sin(-Math.PI / 4) + this.yPos;
+
+            
+                //Moves pen to centre of the pacman
+                ctx.moveTo(this.xPos, this.yPos);
+
+                //Draws the top line
+                ctx.lineTo(x2, y2);
+                
+              
+                //Fills Pacman color in yellow
+                ctx.fillStyle = "rgb(255,255,0)";
+                ctx.fill();
+
+                ctx.stroke();
+				
+				
+			
+				ctx.stroke();							
+			}// draw()
+			
+			// makes the ball rotate in the oposite direction when it hits the canvas
+			rotateBall(){
+				if(this.rotateSpeed == 1){
+					// adds 0.10 to the rotation speed every time the ball its the Left or Right side of the canvas
+					this.rotate += 0.10;
+				}
+				else{
+					// subtracts 0.10 to the rotation speed every time the ball its the Top or Bottom of the canvas
+					this.rotate -= 0.10;
+				}
+			}// rotateBall()
+			
+			move(){
+				// checks to see if the ball is hitting the left or right side of the canvas border
+				if(this.xPos + this.radius > canvasForBall.width || this.xPos - this.radius < 0){					
+					// multiply the xVelocity by -1 to make the ball bounce of the left or right side of the canvas
+					this.xVelocity = this.xVelocity * (-1);
+					
+					// makes the pac man rotate in the oposite direction
+					this.rotateSpeed =- this.rotateSpeed;
+				}
+				if(this.yPos + this.radius > canvasForBall.height || this.yPos - this.radius < 0){
+					// multiply the yVelocity by -1 to make the ball bounce of the Top or Bottom of the canvas 
+					this.yVelocity = this.yVelocity  * (-1);
+					
+					// makes the pac man sign rotate in the oposite direction
+					this.rotateSpeed =- this.rotateSpeed;
+				}
+				
+				
+				this.yPos += this.yVelocity;
+				this.xPos += this.xVelocity;
+			}// move()
+			
+		}//Ball class
+		
+		
+		var ball1 = new Ball(50, 50, 30, 8, 5);
+		var ball2 = new Ball(150, 150, 40, 7, 9);
+		var ball3 = new Ball(100, 450, 35, 12, 12);
+		
+		// Get the animation going.
+		repeatme();
+		
+    </script>
+
+  </body>
+
+</html>
